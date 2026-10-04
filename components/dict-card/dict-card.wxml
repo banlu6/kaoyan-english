@@ -1,0 +1,40 @@
+<!-- components/dict-card/dict-card.wxml -->
+<view class="dc-mask" wx:if="{{show}}" bindtap="onMask">
+  <view class="dc-card" catchtap="noop">
+
+    <view class="dc-head">
+      <text class="dc-w">{{word}}</text>
+      <text class="dc-lemma" wx:if="{{lemma}}">原形 {{lemma}}</text>
+      <view class="dc-close" catchtap="onClose">✕</view>
+    </view>
+
+    <!-- 中部可滚动：释义/例句过长时上下滑动查看（头部与按钮固定不滚） -->
+    <scroll-view class="dc-scroll" scroll-y>
+      <view class="dc-meta">
+        <text class="dc-ph" wx:if="{{ph}}">/{{ph}}/</text>
+        <text class="dc-pos" wx:if="{{pos}}">{{pos}}</text>
+      </view>
+
+      <view class="dc-cn">
+        <text wx:if="{{loading}}" class="dc-loading">查询中…</text>
+        <text wx:else>{{cn}}</text>
+      </view>
+
+      <view class="dc-ex" wx:if="{{exEn}}">
+        <view class="dc-ex-hd">本文例句 · 第 {{exN}} 段</view>
+        <view class="dc-ex-en">{{exEn}}</view>
+        <view class="dc-ex-zh" wx:if="{{exZh}}">{{exZh}}</view>
+      </view>
+      <view class="dc-ex dc-ex-empty" wx:elif="{{!loading}}">本文中未找到例句</view>
+
+      <!-- 占位：微信 scroll-view 的 padding-bottom 不计入滚动范围，用占位块补足 -->
+      <view class="dc-scroll-tail"></view>
+    </scroll-view>
+
+    <view class="dc-actions">
+      <view wx:if="{{saved}}" class="dc-btn dc-btn-saved">已在生词本</view>
+      <view wx:else class="dc-btn dc-btn-add" catchtap="onAdd">＋ 加入生词本</view>
+    </view>
+
+  </view>
+</view>

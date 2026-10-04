@@ -1,0 +1,114 @@
+<!-- pages/settings/settings.wxml -->
+<view class="set">
+
+  <view class="sec">阅读排版</view>
+  <view class="card">
+    <view class="row">
+      <view class="row-l">文章字号</view>
+      <slider class="row-s" min="14" max="26" step="1" value="{{s.articleSize}}"
+              activeColor="#1F5C4A" block-size="20" show-value bindchange="onArticleSize" />
+    </view>
+    <view class="hint">文章正文的大小，14（小）到 26（大）。阅读页顶栏「Aa」也能随时调，效果一样。</view>
+    <view class="hr"></view>
+    <view class="row">
+      <view class="row-l">题目字号</view>
+      <slider class="row-s" min="12" max="22" step="1" value="{{s.questionSize}}"
+              activeColor="#1F5C4A" block-size="20" show-value bindchange="onQuestionSize" />
+    </view>
+    <view class="hint">左侧题卡（题干、选项、解析）的文字大小。</view>
+    <view class="hr"></view>
+    <view class="row">
+      <view class="row-l">段落行距</view>
+      <slider class="row-s" min="1.4" max="2.2" step="0.1" value="{{s.lineHeight}}"
+              activeColor="#1F5C4A" block-size="20" show-value bindchange="onLineHeight" />
+    </view>
+    <view class="hint">文章每行之间的疏密。行距大更易逐句读，行距小一屏能看到更多内容。</view>
+  </view>
+
+  <view class="sec">阅读方向</view>
+  <view class="card">
+    <view class="row row-sw">
+      <view class="row-l">竖屏阅读（不横屏）</view>
+      <switch checked="{{s.orientation === 'portrait'}}" color="#1F5C4A" bindchange="onOrientation" />
+    </view>
+    <view class="hint">关闭＝横屏精读（默认，左题右文）；打开＝竖屏阅读：文章在上、题目在下（两块同时可见），中间分隔条可上下拖动调整题目区高度，适合单手竖握。部分机型或开发者工具可能不支持自动转向，此时手动旋转手机即可。</view>
+  </view>
+
+  <view class="sec">显示</view>
+  <view class="card">
+    <view class="row row-sw">
+      <view class="row-l">显示中文翻译</view>
+      <switch checked="{{s.showZh}}" color="#1F5C4A" bindchange="onShowZh" />
+    </view>
+    <view class="hint">打开后，文章每个段落下方直接显示整段中文对照。关闭则只在点每句末尾的「译」按钮时显示那一句的中文——建议平时做题保持关闭，先自己读懂再看译文。</view>
+    <view class="hr"></view>
+    <view class="row row-sw">
+      <view class="row-l">显示选项中译</view>
+      <switch checked="{{s.showOptZh}}" color="#1F5C4A" bindchange="onShowOptZh" />
+    </view>
+    <view class="hint">打开后，每个选项下方默认显示中文；关闭时可用选项末尾的「译」按钮逐个展开。提交看解析时不受此开关影响。</view>
+  </view>
+
+  <view class="sec">取词</view>
+  <view class="card">
+    <view class="row row-sw">
+      <view class="row-l">取词模式（双击记词）</view>
+      <switch checked="{{s.tapMode}}" color="#1F5C4A" bindchange="onTapMode" />
+    </view>
+    <view class="hint">开启后，文章、题干、选项都按单词切分：双击单词即可加入/移出生词本（全文同一词形的词一起标红）。关闭后按整段纯文本渲染，长文滚动更流畅，但无法取词。</view>
+    <view class="hr"></view>
+    <view class="row row-sw">
+      <view class="row-l">长按看释义</view>
+      <switch checked="{{s.longPressDict}}" color="#1F5C4A" bindchange="onLongPressDict" />
+    </view>
+    <view class="hint">按住单词约半秒弹出释义卡：音标、词性、中文释义和这个词在本文里的例句。释义来自离线词库（约十万词），无需联网。</view>
+  </view>
+
+  <view class="sec">危险操作</view>
+  <view class="card">
+    <view class="d-row" bindtap="clearVocab" hover-class="hover-dim">
+      <text class="d-l">清空生词本</text>
+      <text class="d-meta">{{vocabCount}} 个</text>
+    </view>
+    <view class="hint">删除全部生词及其标红状态。生词是本地保存的，清空前请确认不再需要；有二次确认，不会误删。</view>
+    <view class="hr"></view>
+    <view class="d-row" bindtap="clearProgress" hover-class="hover-dim">
+      <text class="d-l">清空做题进度</text>
+      <text class="d-meta">{{doneCount}} 篇已完成</text>
+    </view>
+    <view class="hint">清除所有篇目的作答记录与完成度统计（首页的「✓ 3/5」「已完成」会归零），同样有二次确认。</view>
+    <view class="hr"></view>
+    <view class="d-row" bindtap="resetSettings" hover-class="hover-dim">
+      <text class="d-l">恢复默认设置</text>
+      <text class="d-meta">字号 / 行距 / 开关</text>
+    </view>
+    <view class="hint">把上面的字号、行距、翻译与取词开关全部恢复为初始值；不影响生词本和做题进度。</view>
+  </view>
+
+  <view class="sec">联系与反馈</view>
+  <view class="card">
+    <view class="row row-link" bindtap="onContactTap" hover-class="hover-dim">
+      <view class="row-l">联系作者 / 提建议</view>
+      <view class="row-chev">›</view>
+    </view>
+    <view class="hint">功能建议、题目纠错、四六级/考研数据补充都欢迎。点击可查看作者邮箱与公众号二维码。</view>
+  </view>
+
+  <view class="foot-note">题目与译文整理自公开网络，仅供个人学习交流，请勿用于商业用途。</view>
+
+  <!-- 联系弹窗（与首页同款：modal + 复制 + 公众号二维码） -->
+  <view class="contact-mask" wx:if="{{showContact}}" bindtap="closeContact">
+    <view class="contact-pop" catchtap="onContactNoop">
+      <view class="contact-hd">联系作者<view class="contact-close" bindtap="closeContact">✕</view></view>
+      <view class="contact-line" bindtap="copyContact" data-copy="{{contactEmail}}">
+        <text class="contact-lab">邮箱</text>
+        <text class="contact-val">{{contactEmail}}（点击复制）</text>
+      </view>
+      <view class="gh-block">
+        <image class="gh-qrcode" src="/images/gh-qrcode.jpg" mode="aspectFit"></image>
+        <view class="gh-tip">微信公众号 · 扫码关注</view>
+      </view>
+      <view class="contact-tip">点击邮箱一行即可复制</view>
+    </view>
+  </view>
+</view>

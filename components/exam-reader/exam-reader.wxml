@@ -1,0 +1,258 @@
+<!-- components/exam-reader/exam-reader.wxml -->
+<view class="reader" style="--sb:{{statusBarH}}px">
+
+  <!-- 顶栏：工具按钮全放左侧，右侧留空避让系统胶囊（···/退出），避免横屏时重叠。
+       竖屏为 custom 导航、页面从顶端绘制，故加 bar-portrait 以留出状态栏高度。 -->
+  <view class="bar {{portrait ? 'bar-portrait' : ''}}">
+    <view class="bar-left">
+      <view class="bar-btn" bindtap="openToc" hover-class="bar-hover">☰ 目录</view>
+      <view class="bar-btn" bindtap="onToggleFont" hover-class="bar-hover">Aa</view>
+      <view class="bar-btn" bindtap="resetCards" hover-class="bar-hover">⟲</view>
+      <view class="bar-btn" bindtap="onExport" hover-class="bar-hover">⤓ 导出</view>
+      <view class="bar-btn bar-btn-exit" bindtap="onExit" hover-class="bar-hover">✕</view>
+    </view>
+    <view class="bar-title ellipsis">{{title}}</view>
+    <view class="bar-cap"></view>
+  </view>
+
+  <!-- 主体：横屏左题卡 右文章；竖屏上下分栏（上文章 下题卡，两块共存） -->
+  <view class="body {{portrait ? 'body-portrait' : ''}}" wx:if="{{ready}}">
+
+    <!-- 题卡区（横屏：左侧面板，可拖拽右边界；竖屏：底部面板，可拖拽上边界，纵向滚动列表） -->
+    <view class="card-area" wx:if="{{!panelCollapsed}}"
+          style="width:{{panelW}}px; --ph:{{panelH}}px;">
+      <view wx:for="{{questions}}" wx:key="no"
+            class="q-card {{item.mini ? 'q-card-mini' : ''}} {{activeIndex === index ? 'q-card-on' : ''}}"
+            data-idx="{{index}}"
+            style="transform: translate({{item.x}}px, {{item.y}}px); z-index: {{item.z}};"
+            bindtap="onCardTap">
+
+        <!-- 标题栏：拖动把手；缩成悬浮签后轻点标题栏即恢复整卡 -->
+        <view class="q-head"
+              data-idx="{{index}}"
+              catchtap="onHeadTap"
+              catchtouchstart="onCardTouchStart"
+              catchtouchmove="onCardTouchMove"
+              catchtouchend="onCardTouchEnd"
+              catchtouchcancel="onCardTouchEnd">
+          <text class="q-no">第 {{item.no}} 题</text>
+          <text class="q-type" wx:if="{{item.qtype && !item.mini}}">{{item.qtype}}</text>
+          <view class="q-mini" wx:if="{{!item.mini}}" data-idx="{{index}}" data-minibtn="1" catchtap="onCardMini">─</view>
+          <text class="q-restore" wx:if="{{item.mini}}">点开 ▸</text>
+        </view>
+
+        <scroll-view class="q-body" scroll-y wx:if="{{!item.mini}}" style="font-size: {{qSize}}px;"
+                     id="qb-{{index}}" data-idx="{{index}}" bindscroll="onQBodyScroll">
+          <view class="q-stem" wx:if="{{item.stem}}">
+            <!-- 取词模式：题干也按词切 token，双击记词 / 长按查释义与文章一致 -->
+            <block wx:if="{{tapMode}}">
+              <block wx:for="{{item.stemTokens}}" wx:for-item="tk" wx:for-index="ti" wx:key="i">
+                <text wx:if="{{tk.t === 'word'}}"
+                      class="wd {{tk.sc ? 'wd-saved' : ''}}"
+                      data-w="{{tk.v}}" data-k="{{tk.k}}"
+                      catchtap="onWordTap" bindlongpress="onWordLong">{{tk.node}}</text>
+                <text wx:else class="tx">{{tk.node}}</text>
+              </block>
+            </block>
+            <text wx:else>{{item.stem}}</text>
+            <view
+              wx:if="{{item.stemZh}}"
+              class="zh-btn {{item.stemShow ? 'zh-btn-on' : ''}}"
+              data-idx="{{index}}" catchtap="onToggleStemZh">译</view>
+          </view>
+          <view class="q-stem-zh" wx:if="{{item.stemShow && item.stemZh}}">{{item.stemZh}}</view>
+
+          <view class="q-opts">
+            <view wx:for="{{item.opts}}" wx:for-item="op" wx:for-index="oi" wx:key="i"
+                  class="opt {{item.pick === oi ? 'opt-pick' : ''}} {{item.submitted && item.answer === oi ? 'opt-ok' : ''}} {{item.submitted && item.pick === oi && item.pick !== item.answer ? 'opt-bad' : ''}}"
+                  data-idx="{{index}}" data-oi="{{oi}}" catchtap="onOptionTap">
+              <text class="opt-l">{{op.letter}}</text>
+              <view class="opt-body">
+                <!-- 取词模式：选项也按词切 token；词上用 catchtap 阻断冒泡，取词不会误选中该选项 -->
+                <view class="opt-t" wx:if="{{tapMode}}">
+                  <block wx:for="{{op.tokens}}" wx:for-item="tk" wx:for-index="ti" wx:key="i">
+                    <text wx:if="{{tk.t === 'word'}}"
+                          class="wd {{tk.sc ? 'wd-saved' : ''}}"
+                          data-w="{{tk.v}}" data-k="{{tk.k}}"
+                          catchtap="onWordTap" bindlongpress="onWordLong">{{tk.node}}</text>
+                    <text wx:else class="tx">{{tk.node}}</text>
+                  </block>
+                </view>
+                <text class="opt-t" wx:else>{{op.en}}</text>
+                <view wx:if="{{op.zh}}"
+                      class="zh-btn zh-btn-sm {{op.show ? 'zh-btn-on' : ''}}"
+                      data-idx="{{index}}" data-oi="{{oi}}" catchtap="onToggleOptZh">译</view>
+                <text class="opt-zh" wx:if="{{op.show && op.zh}}">{{op.zh}}</text>
+              </view>
+              <text class="opt-mark" wx:if="{{item.submitted && item.pick === oi && item.pick !== item.answer}}">你的选择</text>
+            </view>
+          </view>
+
+          <view class="q-actions">
+            <view wx:if="{{!item.submitted}}" class="q-btn q-btn-submit" data-idx="{{index}}" catchtap="onSubmitOne">提交本题</view>
+            <view wx:else class="q-btn q-btn-done" data-idx="{{index}}" catchtap="onSubmitOne">已提交 · 查看解析</view>
+          </view>
+
+          <!-- 解析 -->
+          <view class="q-analysis" wx:if="{{item.submitted}}">
+            <view class="an-missing" wx:if="{{item.answer < 0}}">本题答案缺失，暂无法判对错。</view>
+            <block wx:else>
+              <view class="an-res {{item.correct ? 'an-ok' : 'an-bad'}}">{{item.correct ? '✓ 回答正确' : '✗ 回答错误'}}</view>
+
+              <view class="an-block" wx:if="{{item.locate}}">
+                <view class="an-lp">定位 · 第 {{item.locate.p}} 段</view>
+                <view class="an-le">{{item.locate.en}}</view>
+                <view class="an-lz" wx:if="{{item.locate.zh}}">{{item.locate.zh}}</view>
+              </view>
+
+              <view class="an-block" wx:if="{{item.rows.length}}">
+                <view class="an-row" wx:for="{{item.rows}}" wx:for-item="r" wx:for-index="ri" wx:key="i">
+                  <text class="an-tag">{{r.tag}}</text>
+                  <text class="an-tx">{{r.text}}</text>
+                </view>
+              </view>
+
+              <view class="an-block" wx:if="{{item.optionNotes.length}}">
+                <view class="an-note" wx:for="{{item.optionNotes}}" wx:for-item="nt" wx:for-index="ni" wx:key="i">
+                  <view class="an-note-hd">
+                    <text class="an-nl">{{nt.letter}}</text>
+                    <text class="an-flag {{nt.ok ? 'an-flag-ok' : ''}}">{{nt.ok ? '✓ 正确' : ('✗ ' + nt.flag)}}</text>
+                  </view>
+                  <text class="an-nt" wx:if="{{nt.note}}">{{nt.note}}</text>
+                </view>
+              </view>
+            </block>
+          </view>
+
+          <!-- 尾部占位：微信 scroll-view 的 padding-bottom 不计入滚动范围，
+               没有它滚到底时「提交本题」按钮会被裁掉一截 -->
+          <view class="q-body-tail"></view>
+        </scroll-view>
+
+        <!-- 下滑提示：当前卡内容超出一屏且还没滚动过时出现 -->
+        <view class="q-scroll-hint"
+              wx:if="{{!item.mini && item.overflow && !item.scrolled}}">⌄ 题目可下滑</view>
+      </view>
+
+      <view class="card-hint" wx:if="{{questions.length === 0}}">本篇暂无题目</view>
+    </view>
+
+    <!-- 可拖拽分隔条（题卡面板右边界，仅横屏） -->
+    <view class="divider" wx:if="{{!panelCollapsed && !portrait}}"
+          catchtouchstart="onDividerTouchStart"
+          catchtouchmove="onDividerTouchMove"
+          catchtouchend="onDividerTouchEnd"
+          catchtouchcancel="onDividerTouchEnd">
+      <!-- 只有 catchtap（不拦 touchstart）：轻点＝收起，按住拖动＝调宽，两者互不抢占 -->
+      <view class="collapse-btn" catchtap="onCollapsePanel">⟨</view>
+    </view>
+
+    <!-- 竖屏：横向可拖拽分隔条（上下分栏，按住可拖动改题卡区高度；轻点正中收起） -->
+    <view class="divider-h" wx:if="{{portrait && !panelCollapsed}}"
+          catchtouchstart="onHDividerTouchStart"
+          catchtouchmove="onHDividerTouchMove"
+          catchtouchend="onHDividerTouchEnd"
+          catchtouchcancel="onHDividerTouchEnd">
+      <view class="collapse-btn collapse-btn-h" catchtap="onCollapsePanel">⟨</view>
+    </view>
+
+    <!-- 竖屏：收起题卡区后底部常驻的整宽恢复条（点击展开） -->
+    <view class="panel-restore-h" wx:if="{{portrait && panelCollapsed}}" bindtap="onExpandPanel">
+      题目 ⌃
+    </view>
+
+    <!-- 折叠后的可拖动小悬浮窗（单击展开，拖动可挪位；仅横屏） -->
+    <view class="q-float" wx:if="{{panelCollapsed && !portrait}}"
+          style="left:{{floatX}}px; top:{{floatY}}px;"
+          catchtouchstart="onFloatTouchStart"
+          catchtouchmove="onFloatTouchMove"
+          catchtouchend="onFloatTouchEnd"
+          catchtouchcancel="onFloatTouchEnd">
+      <view class="qf-no">第 {{activeIndex + 1}} 题</view>
+      <view class="qf-sub">共 {{questions.length}} 题</view>
+      <view class="qf-tip">点开 ▸</view>
+    </view>
+
+    <!-- 文章区（横屏在右自动占满剩余宽度；竖屏在上、可下拉滚动） -->
+    <scroll-view class="article"
+                 scroll-y scroll-with-animation scroll-into-view="{{scrollInto}}"
+                 bindscroll="onArticleScroll" style="font-size: {{aSize}}px; line-height: {{lh}};">
+      <view class="art-pad">
+        <view class="para" wx:for="{{paras}}" wx:key="n" id="{{item.id}}">
+          <!-- 逐句渲染：句尾挂「译」按钮，点开才显示该句中译（默认不显示） -->
+          <block wx:for="{{item.sents}}" wx:for-item="s" wx:for-index="si" wx:key="i">
+            <!-- 取词模式：按词切成 token -->
+            <block wx:if="{{tapMode}}">
+              <block wx:for="{{s.tokens}}" wx:for-item="tk" wx:for-index="ti" wx:key="i">
+                <text wx:if="{{tk.t === 'word'}}"
+                      class="wd {{tk.sc ? 'wd-saved' : ''}}"
+                      data-w="{{tk.v}}" data-k="{{tk.k}}" data-p="{{item.n}}"
+                      bindtap="onWordTap" bindlongpress="onWordLong">{{tk.node}}</text>
+                <text wx:else class="tx">{{tk.node}}</text>
+              </block>
+            </block>
+            <!-- 纯文本模式：整句一个节点，性能最佳 -->
+            <text wx:else class="para-plain">{{s.text}}</text>
+
+            <view class="zh-btn {{s.show ? 'zh-btn-on' : ''}}"
+                  data-p="{{index}}" data-si="{{si}}"
+                  catchtap="onToggleSentZh">译</view>
+            <view class="sent-zh" wx:if="{{s.show && s.zh}}">{{s.zh}}</view>
+          </block>
+
+          <view class="para-zh" wx:if="{{showZh && item.zh}}">{{item.zh}}</view>
+        </view>
+        <view class="art-foot">{{source}}</view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="loading" wx:else>{{err || '加载中…'}}</view>
+
+  <!-- 底部条（竖屏折成两行，避免文字被压没） -->
+  <view class="foot {{portrait ? 'foot-portrait' : ''}}" wx:if="{{ready}}">
+    <view class="foot-nav" bindtap="prevQ" hover-class="foot-hover">‹ 上题</view>
+    <view class="foot-prog">{{activeIndex + 1}} / {{questions.length}}</view>
+    <view class="foot-nav" bindtap="nextQ" hover-class="foot-hover">下题 ›</view>
+    <view class="foot-spacer"></view>
+    <view class="foot-btn foot-btn-main" bindtap="submitAll" hover-class="foot-hover">提交全部</view>
+    <view class="foot-btn" bindtap="clearAllAnswers" hover-class="foot-hover">清空作答</view>
+  </view>
+
+  <!-- 页内字号调节浮层 -->
+  <view class="font-pop" wx:if="{{showFont}}">
+    <view class="font-pop-hd">
+      <text>字号调节</text>
+      <view class="font-pop-close" bindtap="onToggleFont" hover-class="bar-hover">✕</view>
+    </view>
+    <view class="font-row">
+      <text class="font-lab">文章字号</text>
+      <slider class="font-sl" min="14" max="26" step="1" value="{{aSize}}"
+              bindchanging="onFontChanging" bindchange="onFontChange"
+              data-key="articleSize" data-field="aSize" />
+    </view>
+    <view class="font-row">
+      <text class="font-lab">题目字号</text>
+      <slider class="font-sl" min="12" max="22" step="1" value="{{qSize}}"
+              bindchanging="onFontChanging" bindchange="onFontChange"
+              data-key="questionSize" data-field="qSize" />
+    </view>
+    <view class="font-row">
+      <text class="font-lab">段落行距</text>
+      <slider class="font-sl" min="1.4" max="2.2" step="0.1" value="{{lh}}"
+              bindchanging="onFontChanging" bindchange="onFontChange"
+              data-key="lineHeight" data-field="lh" />
+    </view>
+  </view>
+
+  <!-- 目录抽屉 -->
+  <toc-drawer show="{{showToc}}" paragraphs="{{tocParas}}" questions="{{tocQuestions}}"
+              bind:close="closeToc" bind:jump="onTocJump" />
+
+  <!-- 释义卡片 -->
+  <dict-card show="{{dict.show}}" word="{{dict.word}}" ph="{{dict.ph}}" pos="{{dict.pos}}"
+             cn="{{dict.cn}}" lemma="{{dict.lemma}}" from="{{dict.from}}"
+             ex-en="{{dict.exEn}}" ex-zh="{{dict.exZh}}" ex-n="{{dict.exN}}"
+             saved="{{dict.saved}}" loading="{{dict.loading}}"
+             bind:close="closeDict" bind:add="onDictAdd" />
+</view>

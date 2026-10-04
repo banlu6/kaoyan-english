@@ -1,0 +1,155 @@
+<!-- pages/home/home.wxml -->
+<view class="home">
+
+  <!-- 头部 -->
+  <view class="hero">
+    <view class="hero-t">考研英语真题</view>
+    <view class="hero-s">横屏/竖屏皆可 · 双击记词 · 长按看释义</view>
+    <view class="hero-stats">
+      <text>{{totalDone}} / {{totalCount}} 篇已完成</text>
+      <text class="hero-dot">·</text>
+      <text>生词 {{vocabCount}}</text>
+    </view>
+  </view>
+
+  <!-- 功能入口 -->
+  <view class="entries">
+    <view class="entry" bindtap="goVocab" hover-class="hover-dim">
+      <view class="entry-ic">📖</view>
+      <view class="entry-bd">
+        <view class="entry-t">单词本</view>
+        <view class="entry-s">{{vocabCount}} 个生词</view>
+      </view>
+      <view class="entry-arrow">›</view>
+    </view>
+    <view class="entry" bindtap="onExportWrong" hover-class="hover-dim">
+      <view class="entry-ic">📝</view>
+      <view class="entry-bd">
+        <view class="entry-t">导出错题</view>
+        <view class="entry-s">{{wrongsCount || 0}} 道错题 · 复制到剪贴板</view>
+      </view>
+      <view class="entry-arrow">›</view>
+    </view>
+    <view class="entry" bindtap="goSettings" hover-class="hover-dim">
+      <view class="entry-ic">⚙️</view>
+      <view class="entry-bd">
+        <view class="entry-t">设置</view>
+        <view class="entry-s">字号 · 行距 · 取词模式</view>
+      </view>
+      <view class="entry-arrow">›</view>
+    </view>
+    <view class="entry" bindtap="onGuideTap" hover-class="hover-dim">
+      <view class="entry-ic">📚</view>
+      <view class="entry-bd">
+        <view class="entry-t">使用教程</view>
+        <view class="entry-s">手势 · 布局 · 取词 · 做题</view>
+      </view>
+      <view class="entry-arrow">›</view>
+    </view>
+  </view>
+
+  <!-- 继续上次 -->
+  <view class="resume" wx:if="{{lastPid}}" bindtap="goLast" hover-class="hover-dim">
+    <view class="resume-bd">
+      <view class="resume-t">继续上次</view>
+      <view class="resume-s ellipsis">{{lastLabel}}</view>
+    </view>
+    <view class="resume-go">继续 ›</view>
+  </view>
+
+  <!-- 卷种切换 -->
+  <view class="tabs">
+    <view wx:for="{{papers}}" wx:key="id"
+          class="tab {{activePaper === item.id ? 'tab-on' : ''}}"
+          data-id="{{item.id}}" bindtap="switchPaper">{{item.name}}</view>
+  </view>
+
+  <!-- 年份列表 -->
+  <view class="years">
+    <view class="year" wx:for="{{years}}" wx:key="year">
+      <view class="year-hd" data-year="{{item.year}}" bindtap="toggleYear" hover-class="hover-dim">
+        <text class="year-n">{{item.year}}</text>
+        <text class="year-meta">{{item.count}} 篇</text>
+        <text class="year-badge" wx:if="{{item.doneCount}}">已做 {{item.doneCount}}</text>
+        <text class="year-caret {{expandedYear === item.year ? 'year-caret-on' : ''}}">⌄</text>
+      </view>
+
+      <view class="year-bd" wx:if="{{expandedYear === item.year}}">
+        <block wx:for="{{groups}}" wx:for-item="g" wx:key="kind">
+          <view class="grp-label">{{g.label}}</view>
+          <view class="p-item" wx:for="{{g.items}}" wx:for-item="p" wx:key="id"
+                data-id="{{p.id}}" bindtap="onPassageTap" hover-class="hover-dim">
+            <view class="p-main">
+              <view class="p-title ellipsis">{{p.title}}</view>
+              <view class="p-sub">{{p.qcount}} 题</view>
+            </view>
+            <view class="p-state p-state-done" wx:if="{{p.done}}">✓ {{p.correct}}/{{p.total}}</view>
+            <view class="p-state p-state-doing" wx:elif="{{p.started}}">进行中</view>
+            <view class="p-arrow">›</view>
+          </view>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <view class="foot-note">本小程序为纯公益项目，无任何商业用途。题目与译文整理自公开网络，仅供个人学习交流。<text class="foot-update">题目会持续陆续更新。</text></view>
+  <view class="contact-btn" bindtap="onContactTap" hover-class="hover-dim">联系作者 / 提建议</view>
+
+  <!-- 免责声明：首次启动强制阅读，倒计时结束才可点同意；遮罩不可点关闭 -->
+  <view class="contact-mask disc-mask" wx:if="{{showDisclaimer}}">
+    <view class="contact-pop disc-pop" catchtap="onDisclaimerNoop">
+      <view class="disc-hd">免责声明</view>
+      <scroll-view class="disc-body" scroll-y>
+        <view class="disc-p">本小程序为纯公益、非商业的学习工具，题目、原文、译文与解析均整理自公开网络资源，仅供个人学习交流使用，不得用于任何商业用途或对外传播。</view>
+        <view class="disc-p">受版权方材料保护，相关真题版权归原命题机构所有。若权利人对内容存有异议，请联系作者核实后下架处理。</view>
+        <view class="disc-p">你的生词本、做题进度等数据仅保存在本机本地，不会上传，也不会被分享给任何第三方。</view>
+        <view class="disc-p">继续使用即表示你已阅读并同意以上内容。</view>
+      </scroll-view>
+      <view class="agree-btn {{agreeReady ? 'agree-on' : 'agree-off'}}" bindtap="agreeDisclaimer" hover-class="{{agreeReady ? 'hover-dim' : ''}}">
+        {{agreeReady ? '我已阅读并同意' : '请阅读（' + agreeCountdown + 's）'}}
+      </view>
+    </view>
+  </view>
+
+  <!-- 联系弹窗（零成本：modal + 复制 + 二维码，不依赖 wx.openCustomerServiceChat） -->
+  <view class="contact-mask" wx:if="{{showContact}}" bindtap="closeContact">
+    <view class="contact-pop" catchtap="onContactNoop">
+      <view class="contact-hd">联系作者<view class="contact-close" bindtap="closeContact">✕</view></view>
+      <view class="contact-line" bindtap="copyContact" data-copy="{{contactEmail}}">
+        <text class="contact-lab">邮箱</text>
+        <text class="contact-val">{{contactEmail}}（点击复制）</text>
+      </view>
+      <view class="gh-block">
+        <image class="gh-qrcode" src="/images/gh-qrcode.jpg" mode="aspectFit"></image>
+        <view class="gh-tip">微信公众号 · 扫码关注</view>
+      </view>
+      <view class="contact-tip">点击邮箱一行即可复制</view>
+    </view>
+  </view>
+
+  <!-- 使用教程弹窗（首次打开自动弹出一次，之后从入口进入） -->
+  <view class="contact-mask" wx:if="{{showGuide}}" bindtap="closeGuide">
+    <scroll-view class="contact-pop guide-pop" scroll-y catchtap="onContactNoop">
+      <view class="contact-hd">使用教程<view class="contact-close" bindtap="closeGuide">✕</view></view>
+      <view class="guide-sec">① 选文章开始</view>
+      <view class="guide-item">首页按卷种（英语一 / 英语二）和年份展开列表，点一篇进入精读（横屏/竖屏可在设置里切换）；「继续上次」可回到未读完的篇目。</view>
+      <view class="guide-sec">② 阅读与取词</view>
+      <view class="guide-item">· <b>双击单词</b>：加入生词本，全文同词形的词都会标红；再双击取消</view>
+      <view class="guide-item">· <b>长按单词</b>（约半秒）：弹出释义卡——音标、词性、释义和该词在本文的例句</view>
+      <view class="guide-item">· 题干和选项里的单词<b>同样支持</b>双击记词、长按查释义，且不会误选选项</view>
+      <view class="guide-item">· 每句英文末尾有「<b>译</b>」按钮，点开只看这一句的中文，再点收起</view>
+      <view class="guide-sec">③ 题目区怎么摆</view>
+      <view class="guide-item">· <b>拖拽题目区右边界</b>：加宽 / 缩窄题目区（轻点正中的 ⟨ 则收起整个题目区）</view>
+      <view class="guide-item">· 题卡标题栏的 <b>─</b>：把这一题缩成小胶囊悬浮签，拖到角落不挡文章，<b>轻点胶囊恢复</b></view>
+      <view class="guide-item">· <b>按住题卡标题栏</b>拖动可挪位置；顶栏 <b>⟲</b> 一键复位所有题卡</view>
+      <view class="guide-item">· 题卡可叠放：点哪张哪张置顶</view>
+      <view class="guide-sec">④ 做题与交卷</view>
+      <view class="guide-item">· 点选项字母或选项区域选择答案，每题可单独「提交本题」看解析，也可底部「提交全部」</view>
+      <view class="guide-item">· 顶部 <b>Aa</b>：页内调字号和行距，拖动即时生效；「☰ 目录」可跳段落和题目</view>
+      <view class="guide-sec">⑤ 生词本</view>
+      <view class="guide-item">双击加入的词都在「单词本」里：可搜索、按年份筛选、标记掌握度（点标签循环切换）、长按删除。</view>
+      <view class="contact-tip">正式做题前建议先关掉「显示中文翻译」，用「译」按钮按需查看</view>
+      <view class="guide-tail"></view>
+    </scroll-view>
+  </view>
+</view>

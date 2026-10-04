@@ -1,0 +1,1 @@
+<exam-reader wx:if="{{pid}}" id="reader" pid="{{pid}}" paper="cet4" />

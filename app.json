@@ -1,0 +1,70 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/vocab/vocab",
+    "pages/settings/settings"
+  ],
+  "subpackages": [
+    {
+      "root": "packageEn1",
+      "name": "en1",
+      "pages": [
+        "pages/read/read"
+      ]
+    },
+    {
+      "root": "packageEn2",
+      "name": "en2",
+      "pages": [
+        "pages/read/read"
+      ]
+    },
+    {
+      "root": "packageCet6Recent",
+      "name": "cet6r",
+      "pages": [
+        "pages/read/read"
+      ]
+    },
+    {
+      "root": "packageCet6Vintage",
+      "name": "cet6v",
+      "pages": [
+        "pages/read/read"
+      ]
+    },
+    {
+      "root": "packageCet4Recent",
+      "name": "cet4r",
+      "pages": [
+        "pages/read/read"
+      ]
+    },
+    {
+      "root": "packageCet4Vintage",
+      "name": "cet4v",
+      "pages": [
+        "pages/read/read"
+      ]
+    }
+  ],
+  "preloadRule": {
+    "pages/home/home": {
+      "network": "all",
+      "packages": [
+        "en1"
+      ]
+    }
+  },
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#1F5C4A",
+    "navigationBarTitleText": "考研英语真题",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F4F5F6",
+    "enablePullDownRefresh": false
+  },
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents",
+  "sitemapLocation": "sitemap.json"
+}

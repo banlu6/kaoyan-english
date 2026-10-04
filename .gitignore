@@ -1,0 +1,31 @@
+# 演示视频 / 字体 / 音频（62MB，含可能受版权保护的字体 mb.ttc）
+video/
+
+# 对外物料与运营文档（推文/封面海报/博客配图/提审材料/隐私补充）——不随代码公开
+公众号素材-按顺序/
+blog-images/
+公众号推文-*
+公众号封面-*
+博客正文-*
+微信提审材料-*
+隐私补充文档.txt
+
+# 微信开发者工具本地私有配置（按惯例不入库）
+project.private.config.json
+
+# 真题题库数据（版权敏感：本仓库只开源代码框架，题目/答案/解析不外发）
+packageEn1/data/
+packageEn2/data/
+packageCet4Recent/data/
+packageCet4Vintage/data/
+packageCet6Recent/data/
+packageCet6Vintage/data/
+
+# 抓取真题用的脚本与数据管线
+tools/
+
+# 依赖与系统文件
+node_modules/
+.DS_Store
+Thumbs.db
+*.log

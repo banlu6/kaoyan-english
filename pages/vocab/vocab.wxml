@@ -1,0 +1,55 @@
+<!-- pages/vocab/vocab.wxml -->
+<view class="vocab">
+
+  <view class="v-head">
+    <view class="v-title">生词本</view>
+    <view class="v-count">{{list.length}} / {{all.length}}</view>
+  </view>
+
+  <view class="v-search-wrap">
+    <input class="v-search" type="text" placeholder="搜索单词或释义" placeholder-class="v-ph-holder"
+           value="{{keyword}}" confirm-type="search" bindinput="onSearch" />
+  </view>
+
+  <view class="v-filters">
+    <picker class="v-pick" range="{{paperOptions}}" range-key="label" value="{{paperIndex}}" bindchange="onPaperChange">
+      <view class="v-pick-in">{{currentPaperLabel}} ⌄</view>
+    </picker>
+    <picker class="v-pick" range="{{yearOptions}}" range-key="label" value="{{yearIndex}}" bindchange="onYearChange">
+      <view class="v-pick-in">{{currentYearLabel}} ⌄</view>
+    </picker>
+    <view class="v-export" bindtap="onExport" hover-class="hover-dim">导出</view>
+  </view>
+
+  <view class="v-list" wx:if="{{list.length}}">
+    <view class="v-item" wx:for="{{list}}" wx:key="w" data-w="{{item.w}}"
+          bindlongpress="onLongPress" hover-class="hover-dim">
+      <view class="v-main">
+        <view class="v-word-line">
+          <text class="v-word">{{item.w}}</text>
+          <text class="v-ph" wx:if="{{item.ph}}">/{{item.ph}}/</text>
+          <text class="v-pos" wx:if="{{item.pos}}">{{item.pos}}</text>
+        </view>
+        <view class="v-cn">{{item.cn}}</view>
+        <view class="v-meta">
+          <text class="v-src ellipsis">{{item.src}}</text>
+          <text class="v-time">{{item.timeLabel}}</text>
+        </view>
+      </view>
+      <view class="v-side">
+        <view class="v-level v-level-{{item.level}}" data-w="{{item.w}}" catchtap="onCycleLevel">{{item.levelLabel}}</view>
+        <view class="v-btns">
+          <view class="v-icon v-icon-del" data-w="{{item.w}}" catchtap="onDelete">✕</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty" wx:else>
+    <view class="empty-icon">📖</view>
+    <view class="empty-text">还没有生词</view>
+    <view class="empty-text">在文章里双击单词即可加入</view>
+    <view class="empty-btn" bindtap="goHome">去首页开始做题</view>
+  </view>
+
+</view>

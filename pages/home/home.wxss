@@ -1,0 +1,319 @@
+/* pages/home/home.wxss */
+.home { padding-bottom: 60rpx; }
+
+/* 头部 */
+.hero {
+  padding: 40rpx 36rpx 44rpx;
+  background: linear-gradient(135deg, #1F5C4A 0%, #2E7561 100%);
+  color: #fff;
+  border-bottom-left-radius: 28rpx;
+  border-bottom-right-radius: 28rpx;
+}
+.hero-t { font-size: 46rpx; font-weight: 700; letter-spacing: 2rpx; }
+.hero-s { margin-top: 12rpx; font-size: 25rpx; opacity: 0.85; }
+.hero-stats {
+  margin-top: 24rpx;
+  font-size: 24rpx;
+  opacity: 0.9;
+}
+.hero-dot { margin: 0 12rpx; opacity: 0.6; }
+
+/* 功能入口：2×2 网格，每张卡足够宽，副标题一行显示不折行 */
+.entries {
+  display: flex;
+  flex-wrap: wrap;
+  margin: -28rpx 18rpx 0;
+}
+.entry {
+  width: calc(50% - 20rpx);
+  margin: 0 10rpx 20rpx;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  padding: 22rpx 24rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  box-shadow: 0 6rpx 20rpx rgba(20, 40, 30, 0.08);
+}
+.entry-ic { font-size: 40rpx; margin-right: 18rpx; }
+.entry-bd { flex: 1; min-width: 0; }
+.entry-t { font-size: 30rpx; font-weight: 600; color: #1F2328; }
+/* 副标题强制单行，超长也不折行（卡片已加宽到 2×2 网格，正常都放得下） */
+.entry-s { font-size: 22rpx; color: #8A939B; margin-top: 4rpx; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.entry-arrow { font-size: 36rpx; color: #C4CACD; }
+
+/* 继续上次 */
+.resume {
+  display: flex;
+  align-items: center;
+  margin: 28rpx 28rpx 0;
+  padding: 26rpx 28rpx;
+  background: #EFF6F3;
+  border: 2rpx solid rgba(31, 92, 74, 0.18);
+  border-radius: 16rpx;
+}
+.resume-bd { flex: 1; min-width: 0; }
+.resume-t { font-size: 26rpx; font-weight: 600; color: #1F5C4A; }
+.resume-s { font-size: 25rpx; color: #4A5259; margin-top: 4rpx; }
+.resume-go {
+  flex: 0 0 auto;
+  margin-left: 20rpx;
+  padding: 10rpx 22rpx;
+  background: #1F5C4A;
+  color: #fff;
+  border-radius: 10rpx;
+  font-size: 25rpx;
+}
+
+/* 卷种 tab */
+.tabs {
+  display: flex;
+  margin: 34rpx 28rpx 0;
+  padding: 6rpx;
+  background: #EBEEEF;
+  border-radius: 14rpx;
+}
+.tab {
+  flex: 1;
+  height: 68rpx;
+  line-height: 68rpx;
+  text-align: center;
+  font-size: 28rpx;
+  color: #4A5259;
+  border-radius: 10rpx;
+}
+.tab-on {
+  background: #fff;
+  color: #1F5C4A;
+  font-weight: 600;
+  box-shadow: 0 2rpx 8rpx rgba(20, 40, 30, 0.08);
+}
+
+/* 年份 */
+.years { margin: 24rpx 28rpx 0; }
+.year {
+  margin-bottom: 16rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 16rpx rgba(20, 40, 30, 0.05);
+  overflow: hidden;
+}
+.year-hd {
+  display: flex;
+  align-items: center;
+  padding: 28rpx 28rpx;
+}
+.year-n { font-size: 32rpx; font-weight: 600; color: #1F2328; }
+.year-meta { margin-left: 16rpx; font-size: 24rpx; color: #8A939B; }
+.year-badge {
+  margin-left: 16rpx;
+  padding: 2rpx 12rpx;
+  border-radius: 20rpx;
+  background: #EAF7EF;
+  color: #1B7A45;
+  font-size: 20rpx;
+}
+.year-caret {
+  margin-left: auto;
+  font-size: 32rpx;
+  color: #B0B6BB;
+  transition: transform 0.2s ease;
+}
+.year-caret-on { transform: rotate(180deg); }
+
+.year-bd {
+  padding: 0 28rpx 20rpx;
+  border-top: 2rpx solid #F2F4F5;
+}
+.grp-label {
+  margin: 18rpx 0 8rpx;
+  font-size: 22rpx;
+  letter-spacing: 1rpx;
+  color: #A5ACB1;
+}
+.p-item {
+  display: flex;
+  align-items: center;
+  padding: 22rpx 20rpx;
+  margin-bottom: 10rpx;
+  background: #FAFBFB;
+  border-radius: 12rpx;
+}
+.p-main { flex: 1; min-width: 0; }
+.p-title { font-size: 28rpx; color: #1F2328; }
+.p-sub { font-size: 22rpx; color: #8A939B; margin-top: 4rpx; }
+.p-state {
+  flex: 0 0 auto;
+  margin-left: 14rpx;
+  font-size: 22rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+}
+.p-state-done { background: #EAF7EF; color: #1B7A45; }
+.p-state-doing { background: #FFF6E6; color: #B7791F; }
+.p-arrow { margin-left: 10rpx; font-size: 34rpx; color: #C4CACD; }
+
+.foot-note {
+  margin: 40rpx 36rpx 0;
+  font-size: 22rpx;
+  line-height: 1.7;
+  color: #B0B6BB;
+  text-align: center;
+}
+
+/* 联系作者按钮 */
+.contact-btn {
+  margin: 16rpx 36rpx 0;
+  padding: 18rpx 0;
+  text-align: center;
+  font-size: 24rpx;
+  color: #1F5C4A;
+  background: #EFF6F3;
+  border: 2rpx solid rgba(31, 92, 74, 0.18);
+  border-radius: 14rpx;
+}
+
+/* 联系弹窗 */
+.contact-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(18, 28, 24, 0.42);
+}
+.contact-pop {
+  width: 560rpx;
+  max-width: 84%;
+  padding: 30rpx 32rpx 28rpx;
+  border-radius: 20rpx;
+  background: #fff;
+  box-shadow: 0 18rpx 48rpx rgba(12, 24, 18, 0.28);
+  color: #1F2328;
+}
+.contact-hd {
+  display: flex;
+  align-items: center;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1F2328;
+}
+.contact-close {
+  margin-left: auto;
+  align-self: flex-start;
+  width: 48rpx;
+  height: 48rpx;
+  line-height: 48rpx;
+  text-align: center;
+  border-radius: 50%;
+  background: #F2F4F5;
+  color: #6B7378;
+  font-size: 26rpx;
+}
+.contact-line {
+  display: flex;
+  align-items: center;
+  margin-top: 22rpx;
+  padding: 20rpx 22rpx;
+  border-radius: 14rpx;
+  background: #F7F9F8;
+  cursor: pointer;
+}
+.contact-lab {
+  flex: 0 0 auto;
+  width: 120rpx;
+  font-size: 26rpx;
+  color: #8A939B;
+}
+.contact-val {
+  flex: 1;
+  min-width: 0;
+  font-size: 27rpx;
+  color: #1F2328;
+}
+.contact-tip {
+  margin-top: 20rpx;
+  font-size: 22rpx;
+  color: #B0B6BB;
+  text-align: center;
+}
+
+/* 公众号二维码块 */
+.gh-block {
+  margin-top: 24rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.gh-qrcode {
+  width: 240rpx;
+  height: 240rpx;
+  border-radius: 12rpx;
+  border: 1rpx solid #E6E8EA;
+}
+.gh-tip {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: #6B7378;
+}
+
+/* 使用教程弹窗：限高 + 可滚动
+   注意：小程序 vh 含状态栏/导航栏区域，实际可视高度小于 100vh，
+   76vh 在部分机型会顶出边框，故收窄到 66vh 并强制 border-box */
+.guide-pop {
+  max-height: 66vh;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+/* 尾部占位：scroll-view 的 padding-bottom 不计入滚动范围，
+   没有它最后一行会被裁掉（与题卡 .q-body-tail 同一个坑） */
+.guide-tail { height: 24rpx; }
+.guide-sec {
+  margin-top: 26rpx;
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1F5C4A;
+}
+.guide-item {
+  margin-top: 10rpx;
+  font-size: 25rpx;
+  line-height: 1.6;
+  color: #1F2328;
+}
+.guide-item b { color: #1F5C4A; }
+
+/* 免责声明弹窗（复用 .contact-mask/.contact-pop，这里覆盖尺寸与正文） */
+.disc-mask { background: rgba(12, 20, 16, 0.62); }
+.disc-pop { width: 620rpx; max-width: 88%; }
+.disc-hd {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #1F2328;
+  text-align: center;
+}
+.disc-body {
+  margin-top: 20rpx;
+  max-height: 46vh;
+  min-height: 220rpx;
+}
+.disc-p {
+  margin-top: 16rpx;
+  font-size: 26rpx;
+  line-height: 1.7;
+  color: #3A4046;
+}
+.agree-btn {
+  margin-top: 30rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  border-radius: 16rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+}
+.agree-on { background: #1F5C4A; color: #fff; }
+.agree-off { background: #E4E8E6; color: #A5ACB1; }
+
+/* 首页脚注里的「会陆续更新」提示 */
+.foot-update { display: block; margin-top: 10rpx; color: #1F5C4A; }

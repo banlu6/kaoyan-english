@@ -1,0 +1,36 @@
+<!-- components/toc-drawer/toc-drawer.wxml -->
+<view class="toc-root">
+  <view class="toc-mask {{show ? 'toc-mask-on' : ''}}" bindtap="onClose"></view>
+
+  <view class="toc-panel {{show ? 'toc-panel-on' : ''}}">
+    <view class="toc-head">
+      <text class="toc-title">目录</text>
+      <view class="toc-close" catchtap="onClose">✕</view>
+    </view>
+
+    <scroll-view class="toc-body" scroll-y>
+      <view class="toc-sec">文章段落</view>
+      <view wx:for="{{paragraphs}}" wx:key="n"
+            class="toc-item {{item.isActive ? 'toc-item-on' : ''}}"
+            data-type="para" data-index="{{index}}" data-n="{{item.n}}"
+            bindtap="onJump">
+        <text class="toc-tag">P{{item.n}}</text>
+        <text class="toc-prev ellipsis">{{item.preview}}</text>
+      </view>
+      <view class="toc-empty" wx:if="{{paragraphs.length === 0}}">暂无段落</view>
+
+      <view class="toc-sec">题目（{{questions.length}}）</view>
+      <view wx:for="{{questions}}" wx:key="no"
+            class="toc-item {{item.isActive ? 'toc-item-on' : ''}}"
+            data-type="question" data-index="{{index}}" data-n="{{item.no}}"
+            bindtap="onJump">
+        <text class="toc-tag">第{{item.no}}题</text>
+        <text class="toc-prev ellipsis">{{item.preview}}</text>
+        <text class="toc-done" wx:if="{{item.answered}}">已答</text>
+      </view>
+      <view class="toc-empty" wx:if="{{questions.length === 0}}">暂无题目</view>
+
+      <view class="toc-foot-space"></view>
+    </scroll-view>
+  </view>
+</view>

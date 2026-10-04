@@ -1,0 +1,5 @@
+/* packageEn2/pages/read/read.wxss */
+page {
+  height: 100%;
+  background: #F4F5F6;
+}

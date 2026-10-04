@@ -1,0 +1,121 @@
+/* components/dict-card/dict-card.wxss */
+.dc-mask {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(18, 28, 24, 0.42);
+}
+
+.dc-card {
+  width: 400px;
+  max-width: 82vw;
+  max-height: 84vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 16px 18px 18px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 18px 48px rgba(12, 24, 18, 0.28);
+  font-family: -apple-system, "PingFang SC", "Helvetica Neue", Helvetica, sans-serif;
+  color: #1F2328;
+}
+
+/* 中部滚动区：释义/例句过长时上下滑动，头部与底部按钮固定 */
+.dc-scroll {
+  flex: 1;
+  min-height: 0;
+  max-height: 58vh;
+}
+.dc-scroll::-webkit-scrollbar { display: none; }
+.dc-scroll-tail { height: 6px; }
+
+.dc-head {
+  display: flex;
+  align-items: baseline;
+}
+.dc-w {
+  font-size: 26px;
+  font-weight: 600;
+  color: #1F5C4A;
+  line-height: 1.2;
+}
+.dc-lemma {
+  margin-left: 10px;
+  font-size: 12px;
+  color: #8A939B;
+}
+.dc-close {
+  margin-left: auto;
+  align-self: flex-start;
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+  text-align: center;
+  border-radius: 50%;
+  background: #F2F4F5;
+  color: #6B7378;
+  font-size: 15px;
+}
+
+.dc-meta {
+  display: flex;
+  align-items: center;
+  margin-top: 6px;
+  min-height: 18px;
+}
+.dc-ph { font-size: 13px; color: #6B7378; margin-right: 10px; }
+.dc-pos {
+  font-size: 12px;
+  color: #1F5C4A;
+  background: #E7F0EC;
+  padding: 1px 7px;
+  border-radius: 5px;
+  margin-right: 8px;
+}
+.dc-src { font-size: 11px; color: #A5ACB1; }
+
+.dc-cn {
+  margin-top: 10px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: #1F2328;
+}
+.dc-loading { color: #A5ACB1; }
+
+.dc-ex {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #F7F9F8;
+  border-left: 3px solid #1F5C4A;
+}
+.dc-ex-empty {
+  border-left-color: #D5DADC;
+  color: #A5ACB1;
+  font-size: 13px;
+}
+.dc-ex-hd { font-size: 11px; color: #8A939B; margin-bottom: 5px; }
+.dc-ex-en { font-size: 14px; line-height: 1.6; color: #2A2F33; }
+.dc-ex-zh { font-size: 13px; line-height: 1.6; color: #8A939B; margin-top: 4px; }
+
+.dc-actions {
+  display: flex;
+  margin-top: 16px;
+}
+.dc-btn {
+  flex: 1;
+  height: 42px;
+  line-height: 42px;
+  text-align: center;
+  border-radius: 10px;
+  font-size: 15px;
+}
+.dc-btn-add { background: #1F5C4A; color: #fff; }
+.dc-btn-saved { background: #EFF1F2; color: #8A939B; }

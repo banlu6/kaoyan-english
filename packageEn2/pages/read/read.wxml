@@ -1,0 +1,2 @@
+<!-- packageEn2/pages/read/read.wxml -->
+<exam-reader wx:if="{{pid}}" id="reader" pid="{{pid}}" paper="en2" />
